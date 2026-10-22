@@ -1,7 +1,7 @@
 # Workflow to build and test wheels.
 # To work on the wheel building infrastructure on a fork, comment out:
 #
-# if: github.repository == 'scipy/scipy'
+# if: github.repository == 'yadava5/scipy'
 #
 # All files related to wheel building are located
 # at tools/wheels/
@@ -44,7 +44,7 @@ jobs:
     runs-on: ${{ matrix.buildplat[0] }}
     if: >
       needs.get_commit_message.outputs.message == 1
-      && (github.repository == 'scipy/scipy' || github.repository == '')
+      && (github.repository == 'yadava5/scipy' || github.repository == '')
     strategy:
       # Ensure that a wheel builder finishes even if another fails
       fail-fast: false
