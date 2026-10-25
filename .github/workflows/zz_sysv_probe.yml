@@ -1,0 +1,33 @@
+name: sysv-probe
+on:
+  push:
+    branches: [probe-sysv-26475]
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, core: ""}
+          - {os: ubuntu-24.04, core: Haswell}
+          - {os: ubuntu-24.04-arm, core: ""}
+          - {os: macos-15, core: ""}
+          - {os: macos-15-intel, core: ""}
+          - {os: windows-2022, core: ""}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.13"}
+      - run: pip install scipy==1.18.1 scipy-openblas32==0.3.34.237.2 threadpoolctl
+      - name: cpu
+        shell: bash
+        run: (lscpu 2>/dev/null | grep -E 'Model name|Flags' | cut -c1-200) || sysctl -n machdep.cpu.brand_string || true
+      - name: direct scipy-openblas32 probe
+        shell: bash
+        env: {OPENBLAS_CORETYPE: "${{ matrix.core }}"}
+        run: python sysv_probe/probe.py
+      - name: ev-br script on PyPI scipy
+        shell: bash
+        env: {OPENBLAS_CORETYPE: "${{ matrix.core }}"}
+        run: cd sysv_probe && python evbr.py
