@@ -1,5 +1,7 @@
 name: sysv-probe
-on: pull_request
+on:
+  push:
+    branches: [probe-sysv-26475]
 jobs:
   probe:
     strategy:
